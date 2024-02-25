@@ -6,19 +6,29 @@ import { Card, Pagination } from "antd";
 import { SearchContext } from "./App";
 
 function Product() {
-  const { ids, setids, products, setproducts, searchByName, setSearchByName } =
-    React.useContext(SearchContext);
+  const {
+    ids,
+    setids,
+    products,
+    setproducts,
+    searchByName,
+    setSearchByName,
+    select,
+    setSelect,
+  } = React.useContext(SearchContext);
   const [currentPage, setCurrentPage] = React.useState(1);
 
-  const totalPages = 5;
-  const itemsPerPage = 20;
+  const totalPages = 2;
+  const itemsPerPage = 50;
 
   const filteredProducts = products.filter(
-    (products) =>
-      products.product &&
+    (product) =>
+      product.product &&
       typeof searchByName === "string" &&
-      products.product.toLowerCase().includes(searchByName.toLowerCase())
+      product.product.toLowerCase().includes(searchByName.toLowerCase())
   );
+
+  console.log(select);
 
   React.useEffect(() => {
     async function fetchData() {
@@ -111,16 +121,8 @@ function Product() {
 
   React.useEffect(() => {
     let isMounted = true;
-
     const fetchData = async () => {
       try {
-        const requestBody = {
-          action: "get_fields",
-          params: {
-            field: "product",
-            limit: 100,
-          },
-        };
         const password = "Valantis";
         const timestamp = new Date()
           .toISOString()
@@ -128,6 +130,13 @@ function Product() {
           .replace(/-/g, "");
         const xAuth = md5(`${password}_${timestamp}`);
 
+        const requestBody = {
+          action: "get_fields",
+          params: {
+            field: "product",
+            limit: 100,
+          },
+        };
         const response = await axios.post(
           "http://api.valantis.store:40000/",
           requestBody,
@@ -137,7 +146,6 @@ function Product() {
             },
           }
         );
-
         if (isMounted && response.status === 200) {
           const filteredProducts = response.data.result;
           setSearchByName(filteredProducts);
@@ -153,6 +161,56 @@ function Product() {
 
     if (isMounted) {
       fetchData();
+    }
+
+    return () => {
+      isMounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    const fetchDataPlus = async () => {
+      try {
+        const password = "Valantis";
+        const timestamp = new Date()
+          .toISOString()
+          .slice(0, 10)
+          .replace(/-/g, "");
+        const xAuth = md5(`${password}_${timestamp}`);
+
+        const requestBody = {
+          action: "get_fields",
+          params: {
+            field: "brand",
+          },
+        };
+        const response = await axios.post(
+          "http://api.valantis.store:40000/",
+          requestBody,
+          {
+            headers: {
+              "X-Auth": xAuth,
+            },
+          }
+        );
+
+        if (isMounted && response.status === 200) {
+          const filteredProducts = response.data.result;
+          setSelect(filteredProducts);
+        } else if (isMounted) {
+          console.error("Request failed with status code:", response.status);
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error("Error fetching filtered products:", error.message);
+        }
+      }
+    };
+
+    if (isMounted) {
+      fetchDataPlus();
     }
 
     return () => {

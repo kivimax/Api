@@ -20,11 +20,11 @@ function Header() {
       />
       <Select
         mode="multiple"
-        placeholder="Brand"
+        placeholder="Select Brand"
         style={{
           width: "20%",
         }}
-      />
+      ></Select>
     </div>
   );
 }
