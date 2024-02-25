@@ -10,9 +10,8 @@ function Product() {
     React.useContext(SearchContext);
   const [currentPage, setCurrentPage] = React.useState(1);
 
-  console.log(searchByName);
   const totalPages = 5;
-  const itemsPerPage = 10;
+  const itemsPerPage = 20;
 
   const filteredProducts = products.filter(
     (products) =>
@@ -33,7 +32,7 @@ function Product() {
 
         const requestBody = {
           action: "get_ids",
-          params: { limit: 10 },
+          params: { limit: 100 },
         };
 
         const response = await axios.post(
@@ -119,7 +118,7 @@ function Product() {
           action: "get_fields",
           params: {
             field: "product",
-            limit: 20,
+            limit: 100,
           },
         };
         const password = "Valantis";
