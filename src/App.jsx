@@ -8,7 +8,7 @@ export const SearchContext = React.createContext();
 function App() {
   const [ids, setids] = React.useState([]);
   const [products, setproducts] = React.useState([]);
-  const [searchByName, setSearchByName] = React.useState([]);
+  const [searchByName, setSearchByName] = React.useState('');
   const [select, setSelect] = React.useState([]);
 
   return (
